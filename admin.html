@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Portal</h1>
+        <div id="login-section">
+            <input type="email" id="email" placeholder="Admin Email">
+            <input type="password" id="password" placeholder="Password">
+            <button id="btnLogin" class="btn btn-dark">Login</button>
+        </div>
+
+        <div id="dashboard-section" style="display:none;">
+            <button id="btnStart" class="btn btn-primary">Start Live Session</button>
+            <button id="btnStop" class="btn btn-danger" style="display:none;">Stop Session</button>
+            
+            <div id="qr-container" class="center-content" style="display:none; margin: 20px 0;">
+                <canvas id="qr-canvas"></canvas>
+                <p style="color: #6b7280; font-size: 0.9rem; margin-top: 10px;">Code rotates automatically to prevent sharing</p>
+            </div>
+
+            <div style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
+                <h3>Present: <span id="count">0</span></h3>
+                <button id="btnCopy" class="btn btn-success" style="width:auto;">Copy for WhatsApp</button>
+            </div>
+            <div class="list-group" id="attendanceList"></div>
+        </div>
+    </div>
+    <script src="js/api.js"></script>
+    <script src="js/crypto.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
