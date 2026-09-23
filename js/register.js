@@ -1,6 +1,7 @@
 document.getElementById('regForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const code = document.getElementById('regCode').value.trim();
+    const name = document.getElementById('studentName').value.trim();
+    const rollNumber = document.getElementById('rollNumber').value.trim();
     const pin = document.getElementById('pin').value;
     const btn = document.getElementById('btnSubmit');
     const status = document.getElementById('status');
@@ -8,26 +9,21 @@ document.getElementById('regForm').addEventListener('submit', async (e) => {
     if (pin.length !== 4) return alert("PIN must be exactly 4 digits.");
     
     btn.disabled = true;
-    btn.innerText = "Generating Security Keys...";
+    btn.innerText = "Registering Device...";
 
     try {
-        // 1. Generate WebCrypto Keys
         const keys = await cryptoUtil.generateDeviceKeys();
-        
-        // 2. Encrypt Private Key with PIN
         const encryptedVault = await cryptoUtil.encryptKeyWithPin(keys.privateKeyBase64, pin);
 
-        // 3. Send Public Key to Edge Function
         const res = await fetch(`${EDGE_FUNCTIONS_URL}/register-student`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ registrationCode: code, publicKey: keys.publicKey })
+            body: JSON.stringify({ name, rollNumber, publicKey: keys.publicKey })
         });
         
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Registration failed");
 
-        // 4. Save to LocalStorage
         localStorage.setItem('student_vault', JSON.stringify(encryptedVault));
         localStorage.setItem('student_id', data.studentId);
 
