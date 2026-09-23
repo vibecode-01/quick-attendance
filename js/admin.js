@@ -26,6 +26,22 @@ document.getElementById('btnStart').addEventListener('click', async () => {
     // Generate secure secret for TOTP
     const secret = cryptoUtil.bufToBase64(crypto.getRandomValues(new Uint8Array(16)));
     
+    // Change button text so you know it was clicked
+    document.getElementById('btnStart').innerText = "Starting session...";
+    
+    // Get Admin Location with a strict 5-second timeout
+    navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+            createSessionRecord(secret, pos.coords.latitude, pos.coords.longitude);
+        }, 
+        () => {
+            // Fallback: If location is denied or times out, start session without location
+            createSessionRecord(secret, null, null);
+        },
+        { timeout: 5000 } // <-- THIS PREVENTS THE HANG
+    );
+});
+    
     // Get Admin Location (Optional)
     navigator.geolocation.getCurrentPosition(async (pos) => {
         createSessionRecord(secret, pos.coords.latitude, pos.coords.longitude);
