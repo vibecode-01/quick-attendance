@@ -58,10 +58,18 @@ async function createSessionRecord(secret, lat, lng) {
     updateListUI();
 
     // Start rotating QR
-    async function updateQR() {
+   async function updateQR() {
     if (!currentSession) return;
     const token = await cryptoUtil.generateTOTP(currentSession.secret);
     const payload = JSON.stringify({ s: currentSession.id, t: token });
+    
+    // Draw the QR code synchronously to the canvas
+    new QRious({
+        element: document.getElementById('qr-canvas'),
+        value: payload,
+        size: 300
+    });
+}
     
     // Using lowercase 'qrcode' matches the library's exact variable name
     qrcode.toCanvas(document.getElementById('qr-canvas'), payload, { width: 300 });
