@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mark Attendance</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+<body>
+    <div class="container center-content">
+        <h1>Scan Attendance</h1>
+        <div id="status"></div>
+
+        <!-- Step 1: PIN Entry -->
+        <div id="pin-section">
+            <p>Enter your 4-digit PIN to unlock scanner.</p>
+            <input type="password" id="unlockPin" maxlength="4" placeholder="••••" style="text-align:center; font-size:24px; letter-spacing:10px;">
+            <button id="btnUnlock" class="btn btn-primary">Unlock Scanner</button>
+        </div>
+
+        <!-- Step 2: Scanner -->
+        <div id="scanner-section" style="display:none;">
+            <div id="qr-reader"></div>
+            <button onclick="location.reload()" class="btn btn-secondary" style="margin-top: 20px;">Cancel</button>
+        </div>
+        
+        <a href="index.html" class="btn btn-secondary" style="margin-top: 20px;" id="btnBack">Back</a>
+    </div>
+    <script src="js/api.js"></script>
+    <script src="js/crypto.js"></script>
+    <script src="js/student.js"></script>
+</body>
+</html>
