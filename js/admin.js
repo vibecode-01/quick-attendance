@@ -58,9 +58,14 @@ async function createSessionRecord(secret, lat, lng) {
     updateListUI();
 
     // Start rotating QR
-    updateQR();
-    qrInterval = setInterval(updateQR, 5000);
-
+    async function updateQR() {
+    if (!currentSession) return;
+    const token = await cryptoUtil.generateTOTP(currentSession.secret);
+    const payload = JSON.stringify({ s: currentSession.id, t: token });
+    
+    // Using lowercase 'qrcode' matches the library's exact variable name
+    qrcode.toCanvas(document.getElementById('qr-canvas'), payload, { width: 300 });
+}
     // Listen for live attendance via Supabase Realtime
     realtimeSubscription = supabase.channel('realtime-attendance')
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'attendance_records', filter: `session_id=eq.${currentSession.id}` }, 
