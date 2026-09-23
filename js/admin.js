@@ -41,14 +41,6 @@ document.getElementById('btnStart').addEventListener('click', async () => {
         { timeout: 5000 } // <-- THIS PREVENTS THE HANG
     );
 });
-    
-    // Get Admin Location (Optional)
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-        createSessionRecord(secret, pos.coords.latitude, pos.coords.longitude);
-    }, () => {
-        createSessionRecord(secret, null, null);
-    });
-});
 
 async function createSessionRecord(secret, lat, lng) {
     const { data, error } = await supabase.from('sessions').insert({ secret, admin_lat: lat, admin_lng: lng }).select().single();
@@ -56,6 +48,10 @@ async function createSessionRecord(secret, lat, lng) {
     
     currentSession = data;
     document.getElementById('btnStart').style.display = 'none';
+    
+    // Reset the button text for the next time it's used
+    document.getElementById('btnStart').innerText = "Start Live Session";
+    
     document.getElementById('btnStop').style.display = 'block';
     document.getElementById('qr-container').style.display = 'block';
     presentStudents = [];
