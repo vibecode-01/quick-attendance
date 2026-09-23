@@ -24,7 +24,15 @@ document.getElementById('btnUnlock').addEventListener('click', async () => {
 });
 
 function startScanner() {
-    const html5QrcodeScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: 250 });
+    // supportedScanTypes: [0] forces the scanner to use the Camera ONLY (removes image upload)
+    const html5QrcodeScanner = new Html5QrcodeScanner(
+        "qr-reader", 
+        { 
+            fps: 10, 
+            qrbox: 250,
+            supportedScanTypes: [0] 
+        }
+    );
     const status = document.getElementById('status');
 
     html5QrcodeScanner.render(async (decodedText) => {
