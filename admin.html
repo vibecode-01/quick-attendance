@@ -5,12 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    
+    <!-- QR Code Library (Updated to robust cdnjs link) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode/1.5.3/qrcode.min.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>Admin Portal</h1>
+        
         <div id="login-section">
             <input type="email" id="email" placeholder="Admin Email">
             <input type="password" id="password" placeholder="Password">
@@ -30,9 +35,11 @@
                 <h3>Present: <span id="count">0</span></h3>
                 <button id="btnCopy" class="btn btn-success" style="width:auto;">Copy for WhatsApp</button>
             </div>
+            
             <div class="list-group" id="attendanceList"></div>
         </div>
     </div>
+    
     <script src="js/api.js"></script>
     <script src="js/crypto.js"></script>
     <script src="js/admin.js"></script>
