@@ -3,19 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Class Attendance</title>
+    <title>Quick Attendance - Modern Attendance System</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container center-content">
-        <h1>Attendance Portal</h1>
-        <p>Select your portal to continue.</p>
-        <div class="button-group">
-            <a href="student.html" class="btn btn-primary">Student Scanner</a>
-            <a href="register.html" class="btn btn-secondary">Student Registration</a>
-            <hr style="margin: 20px 0; width: 100%;">
-            <a href="admin.html" class="btn btn-dark">Admin Dashboard</a>
-        </div>
+    <div class="page-wrapper">
+        <main>
+            <div class="hero">
+                <div class="hero-logo">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h1 class="hero-title">Quick Attendance</h1>
+                <p class="hero-subtitle">
+                    A modern, secure attendance system that works on any device. 
+                    Students scan QR codes, admins track attendance in real-time.
+                </p>
+                
+                <div class="portal-grid">
+                    <!-- Student Attendance Portal -->
+                    <a href="student.html" class="portal-card">
+                        <div class="portal-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 5v7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h2 class="portal-title">Student Attendance</h2>
+                        <p class="portal-description">Scan QR codes to mark your attendance. Fast, secure, and easy.</p>
+                        <span class="portal-cta">
+                            Enter Portal
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </a>
+                    
+                    <!-- Student Registration Portal -->
+                    <a href="register.html" class="portal-card">
+                        <div class="portal-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M20 8v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M23 11h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h2 class="portal-title">Student Registration</h2>
+                        <p class="portal-description">Register your device with your student details and create a secure PIN.</p>
+                        <span class="portal-cta">
+                            Get Started
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </a>
+                    
+                    <!-- Admin Dashboard Portal -->
+                    <a href="admin.html" class="portal-card">
+                        <div class="portal-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h2 class="portal-title">Admin Dashboard</h2>
+                        <p class="portal-description">Manage attendance sessions, view real-time data, and generate reports.</p>
+                        <span class="portal-cta">
+                            Sign In
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </main>
+        
+        <footer class="footer">
+            <p>Quick Attendance &copy; <span id="currentYear"></span> | Secure & Modern Attendance System</p>
+        </footer>
     </div>
+    
+    <script>
+        // Set current year in footer
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+    </script>
 </body>
 </html>

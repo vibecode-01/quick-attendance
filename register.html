@@ -3,31 +3,290 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Registration</title>
+    <title>Student Registration - Quick Attendance</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Device Registration</h1>
-        <p style="margin-bottom: 20px;">Ask your teacher for your one-time Registration Code.</p>
-        <div id="status"></div>
-        <form id="regForm">
-            <label>Full Name</label>
-            <input type="text" id="studentName" placeholder="e.g. John Doe" required>
+    <div class="page-wrapper">
+        <div class="registration-container">
+            <!-- Registration Form -->
+            <div id="registration-form-section">
+                <div class="registration-form card-light">
+                    <div class="card-header text-center">
+                        <div class="hero-logo" style="margin: 0 auto 1rem;">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M20 8v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M23 11h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <h2>Student Registration</h2>
+                        <p class="text-muted">Register your device to mark attendance</p>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div id="status"></div>
+                        
+                        <form id="regForm">
+                            <div class="form-group">
+                                <label class="form-label" for="studentName">Full Name</label>
+                                <input 
+                                    type="text" 
+                                    id="studentName" 
+                                    class="form-input form-input-light" 
+                                    placeholder="Enter your full name"
+                                    required
+                                    autocomplete="name"
+                                >
+                                <span class="form-hint">As it appears in school records</span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="rollNumber">Roll Number</label>
+                                <input 
+                                    type="text" 
+                                    id="rollNumber" 
+                                    class="form-input form-input-light" 
+                                    placeholder="e.g. 101, CS-001, 2024/001"
+                                    required
+                                    autocomplete="off"
+                                >
+                                <span class="form-hint">Your unique student identifier</span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="pin">Create a 4-Digit PIN</label>
+                                <div class="form-toggle-password">
+                                    <input 
+                                        type="password" 
+                                        id="pin" 
+                                        class="form-input form-input-light" 
+                                        maxlength="4" 
+                                        pattern="\d{4}" 
+                                        placeholder="Enter 4-digit PIN"
+                                        required
+                                        autocomplete="new-password"
+                                    >
+                                    <button type="button" class="toggle-visibility" onclick="togglePasswordVisibility('pin', this)">
+                                        <svg id="pinEye" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M12 5C5 5 2 12 2 12s3 7 10 7 10-7 10-7-3-7-10-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <span class="form-hint">This PIN will unlock your attendance scanner</span>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="confirmPin">Confirm PIN</label>
+                                <div class="form-toggle-password">
+                                    <input 
+                                        type="password" 
+                                        id="confirmPin" 
+                                        class="form-input form-input-light" 
+                                        maxlength="4" 
+                                        pattern="\d{4}" 
+                                        placeholder="Re-enter your PIN"
+                                        required
+                                        autocomplete="new-password"
+                                    >
+                                    <button type="button" class="toggle-visibility" onclick="togglePasswordVisibility('confirmPin', this)">
+                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M12 5C5 5 2 12 2 12s3 7 10 7 10-7 10-7-3-7-10-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                            <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label">Device Information</label>
+                                <div class="card" style="padding: 1rem; background: var(--bg-tertiary); border: none;">
+                                    <p style="color: var(--text-secondary); font-size: 0.875rem; margin: 0;">
+                                        <strong>Note:</strong> This device will be bound to your student account. 
+                                        You'll use this device to scan QR codes and mark attendance.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" id="btnSubmit" class="btn btn-primary btn-block">
+                                Register Device
+                            </button>
+                        </form>
+                        
+                        <div class="mt-lg text-center">
+                            <a href="index.html" class="btn btn-secondary">
+                                Back to Home
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
             
-            <label>Roll Number</label>
-            <input type="text" id="rollNumber" placeholder="e.g. 101" required>
-            
-            <label>Create a 4-Digit PIN</label>
-            <input type="password" id="pin" maxlength="4" pattern="\d{4}" placeholder="e.g. 1234" required>
-            
-            <button type="submit" class="btn btn-primary" id="btnSubmit">Register Device</button>
-        </form>
-        <a href="index.html" class="btn btn-secondary" style="margin-top: 10px;">Back to Home</a>
+            <!-- Success Section -->
+            <div id="success-section" class="hidden">
+                <div class="registration-success card-light">
+                    <div class="registration-success-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M22 4L12 14.01l-3-3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    
+                    <h2 class="success-title">Device Registered Successfully!</h2>
+                    <p class="success-message">
+                        Your device has been bound to your student account. 
+                        You can now use it to mark attendance by scanning QR codes.
+                    </p>
+                    
+                    <div class="success-details">
+                        <div class="success-details-item">
+                            <span style="color: var(--text-muted);">Student Name</span>
+                            <strong id="successName">-</strong>
+                        </div>
+                        <div class="success-details-item">
+                            <span style="color: var(--text-muted);">Roll Number</span>
+                            <strong id="successRoll">-</strong>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-xl text-center">
+                        <a href="student.html" class="btn btn-primary btn-block">
+                            Go to Attendance Scanner
+                        </a>
+                    </div>
+                    
+                    <div class="mt-lg text-center">
+                        <a href="index.html" class="btn btn-secondary">
+                            Back to Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+    
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+    
+    <!-- Scripts -->
     <script src="js/api.js"></script>
     <script src="js/crypto.js"></script>
-    <script src="js/register.js"></script>
+    <script src="js/toast.js"></script>
+    <script>
+        // Toggle password visibility
+        function togglePasswordVisibility(inputId, button) {
+            const input = document.getElementById(inputId);
+            const eyeIcon = button.querySelector('svg');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                eyeIcon.innerHTML = `
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                `;
+            } else {
+                input.type = 'password';
+                eyeIcon.innerHTML = `
+                    <path d="M12 5C5 5 2 12 2 12s3 7 10 7 10-7 10-7-3-7-10-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                `;
+            }
+        }
+        
+        // Form submission handler
+        document.getElementById('regForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('studentName').value.trim();
+            const rollNumber = document.getElementById('rollNumber').value.trim();
+            const pin = document.getElementById('pin').value;
+            const confirmPin = document.getElementById('confirmPin').value;
+            const btn = document.getElementById('btnSubmit');
+            const status = document.getElementById('status');
+            
+            // Clear previous errors
+            status.innerHTML = '';
+            
+            // Validation
+            if (!name) {
+                Toast.error('Please enter your full name');
+                return;
+            }
+            
+            if (!rollNumber) {
+                Toast.error('Please enter your roll number');
+                return;
+            }
+            
+            if (pin.length !== 4 || !/^\d{4}$/.test(pin)) {
+                Toast.error('PIN must be exactly 4 digits');
+                return;
+            }
+            
+            if (pin !== confirmPin) {
+                Toast.error('PINs do not match');
+                return;
+            }
+            
+            // Show loading state
+            btn.disabled = true;
+            btn.classList.add('btn-loading');
+            btn.innerHTML = 'Registering...';
+            
+            try {
+                const keys = await cryptoUtil.generateDeviceKeys();
+                const encryptedVault = await cryptoUtil.encryptKeyWithPin(keys.privateKeyBase64, pin);
+                
+                const res = await fetch(`${EDGE_FUNCTIONS_URL}/register-student`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        name, 
+                        rollNumber, 
+                        publicKey: keys.publicKey 
+                    })
+                });
+                
+                const data = await res.json();
+                
+                if (!res.ok) {
+                    throw new Error(data.error || 'Registration failed');
+                }
+                
+                // Save to localStorage
+                localStorage.setItem('student_vault', JSON.stringify(encryptedVault));
+                localStorage.setItem('student_id', data.studentId);
+                localStorage.setItem('student_name', name);
+                localStorage.setItem('student_roll', rollNumber);
+                
+                // Hide form, show success
+                document.getElementById('registration-form-section').classList.add('hidden');
+                document.getElementById('success-section').classList.remove('hidden');
+                
+                // Set success info
+                document.getElementById('successName').textContent = name;
+                document.getElementById('successRoll').textContent = rollNumber;
+                
+                Toast.success('Device registered successfully!');
+                
+            } catch (err) {
+                console.error('Registration error:', err);
+                status.innerHTML = `<div class="alert alert-error">${err.message}</div>`;
+                Toast.error(err.message);
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove('btn-loading');
+                btn.innerHTML = 'Register Device';
+            }
+        });
+    </script>
 </body>
 </html>

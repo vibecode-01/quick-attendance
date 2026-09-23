@@ -3,44 +3,334 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>Admin Dashboard - Quick Attendance</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Replace the old QR code script with this robust QRious CDN -->
+    <!-- QR Code Library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1>Admin Portal</h1>
-        
-        <div id="login-section">
-            <input type="email" id="email" placeholder="Admin Email">
-            <input type="password" id="password" placeholder="Password">
-            <button id="btnLogin" class="btn btn-dark">Login</button>
-        </div>
-
-        <div id="dashboard-section" style="display:none;">
-            <button id="btnStart" class="btn btn-primary">Start Live Session</button>
-            <button id="btnStop" class="btn btn-danger" style="display:none;">Stop Session</button>
-            
-            <div id="qr-container" class="center-content" style="display:none; margin: 20px 0;">
-                <canvas id="qr-canvas"></canvas>
-                <p style="color: #6b7280; font-size: 0.9rem; margin-top: 10px;">Code rotates automatically to prevent sharing</p>
+    <div class="page-wrapper">
+        <div class="admin-container">
+            <!-- Login Section -->
+            <div id="login-section" class="admin-login-card card-light">
+                <div class="card-header">
+                    <div class="admin-brand">
+                        <div class="admin-brand-logo">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="admin-brand-title">Quick Attendance</h2>
+                            <p class="text-muted">Admin Dashboard</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <h3 class="admin-login-title">Sign In</h3>
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email Address</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            class="form-input form-input-light" 
+                            placeholder="admin@school.edu"
+                            autocomplete="email"
+                        >
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <div class="form-toggle-password">
+                            <input 
+                                type="password" 
+                                id="password" 
+                                class="form-input form-input-light" 
+                                placeholder="Enter your password"
+                                autocomplete="current-password"
+                            >
+                            <button type="button" class="toggle-visibility" onclick="togglePasswordVisibility('password', this)">
+                                <svg id="passwordEye" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 5C5 5 2 12 2 12s3 7 10 7 10-7 10-7-3-7-10-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button id="btnLogin" class="btn btn-primary btn-block">
+                        Sign In
+                    </button>
+                </div>
             </div>
 
-            <div style="margin-top: 2rem; display: flex; justify-content: space-between; align-items: center;">
-                <h3>Present: <span id="count">0</span></h3>
-                <button id="btnCopy" class="btn btn-success" style="width:auto;">Copy for WhatsApp</button>
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" style="display: none;">
+                <!-- Header -->
+                <header class="admin-header">
+                    <div class="admin-brand">
+                        <div class="admin-brand-logo">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="admin-brand-title">Quick Attendance</h1>
+                            <p class="text-muted">Admin Dashboard</p>
+                        </div>
+                    </div>
+                    
+                    <div class="admin-user">
+                        <div class="admin-user-info">
+                            <div class="admin-user-name" id="adminName">Admin</div>
+                            <div class="admin-user-email" id="adminEmail">-</div>
+                        </div>
+                        <button id="btnLogout" class="btn btn-secondary" onclick="handleLogout()">
+                            Sign Out
+                        </button>
+                    </div>
+                </header>
+
+                <!-- Dashboard Stats -->
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon stat-icon-primary">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-label">Current Session</div>
+                        <div class="stat-value" id="sessionStatus">Inactive</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon stat-icon-success">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M20 8v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M23 11h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-label">Present Students</div>
+                        <div class="stat-value" id="presentCount">0</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon stat-icon-warning">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 5v7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-label">Location Verified</div>
+                        <div class="stat-value" id="locationVerifiedCount">0%</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon stat-icon-primary">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="stat-label">Session Start</div>
+                        <div class="stat-value" id="sessionStartTime">-</div>
+                    </div>
+                </div>
+
+                <!-- Session Controls -->
+                <div class="session-controls">
+                    <div class="session-controls-header">
+                        <h2 class="session-controls-title">Live Session</h2>
+                        <p class="session-controls-description">Start a live session to generate QR codes for attendance</p>
+                    </div>
+                    
+                    <div class="session-buttons">
+                        <button id="btnStart" class="btn btn-primary">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Start Live Session
+                        </button>
+                        
+                        <button id="btnStop" class="btn btn-danger" style="display: none;">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Stop Session
+                        </button>
+                    </div>
+                </div>
+
+                <!-- QR Code Display -->
+                <div id="qr-container" class="qr-display" style="display: none;">
+                    <h2>Live QR Code</h2>
+                    <p class="qr-info text-muted">Students scan this code to mark attendance. Code rotates automatically every 10 seconds.</p>
+                    
+                    <div class="qr-canvas-container">
+                        <canvas id="qr-canvas"></canvas>
+                    </div>
+                    
+                    <div class="qr-rotation-indicator">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M12 5v7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        QR rotates every 10 seconds
+                    </div>
+                </div>
+
+                <!-- Attendance Section -->
+                <div class="attendance-section">
+                    <div class="attendance-header">
+                        <h2 class="attendance-title">Attendance List</h2>
+                        <div class="flex items-center gap-md">
+                            <span class="attendance-count" id="count">0</span>
+                            <button id="btnCopy" class="btn btn-success">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Copy for WhatsApp
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="attendance-search">
+                        <span class="attendance-search-icon">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
+                        <input type="text" id="searchInput" placeholder="Search students by name or roll number...">
+                    </div>
+                    
+                    <div class="attendance-list" id="attendanceList">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M20 8v6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M23 11h-6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <h3 class="empty-state-title">No attendance yet</h3>
+                            <p class="empty-state-description">Students will appear here as they scan the QR code.</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            <div class="list-group" id="attendanceList"></div>
         </div>
     </div>
     
+    <!-- Toast Container -->
+    <div id="toast-container"></div>
+    
+    <!-- Scripts -->
     <script src="js/api.js"></script>
     <script src="js/crypto.js"></script>
+    <script src="js/toast.js"></script>
     <script src="js/admin.js"></script>
+    
+    <script>
+        // Toggle password visibility
+        function togglePasswordVisibility(inputId, button) {
+            const input = document.getElementById(inputId);
+            const eyeIcon = button.querySelector('svg');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                eyeIcon.innerHTML = `
+                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                `;
+            } else {
+                input.type = 'password';
+                eyeIcon.innerHTML = `
+                    <path d="M12 5C5 5 2 12 2 12s3 7 10 7 10-7 10-7-3-7-10-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                `;
+            }
+        }
+        
+        // Handle logout
+        async function handleLogout() {
+            try {
+                await supabase.auth.signOut();
+                window.location.reload();
+            } catch (error) {
+                Toast.error(error.message || 'Failed to sign out');
+            }
+        }
+        
+        // Update admin info when dashboard loads
+        supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session && session.user) {
+                const user = session.user;
+                document.getElementById('adminEmail').textContent = user.email || '-';
+                // Extract name from email if available
+                const name = user.user_metadata?.name || user.email?.split('@')[0] || 'Admin';
+                document.getElementById('adminName').textContent = name;
+            }
+        });
+        
+        // Update stats display
+        function updateStats() {
+            const presentCount = document.getElementById('presentCount');
+            const locationVerifiedCount = document.getElementById('locationVerifiedCount');
+            const sessionStatus = document.getElementById('sessionStatus');
+            const sessionStartTime = document.getElementById('sessionStartTime');
+            
+            if (presentCount && window.presentStudents) {
+                presentCount.textContent = window.presentStudents.length;
+            }
+            
+            if (locationVerifiedCount && window.presentStudents && window.presentStudents.length > 0) {
+                const verified = window.presentStudents.filter(s => s.locationVerified).length;
+                const percentage = Math.round((verified / window.presentStudents.length) * 100);
+                locationVerifiedCount.textContent = `${percentage}%`;
+            }
+            
+            if (sessionStatus && window.currentSession) {
+                sessionStatus.textContent = 'Active';
+                sessionStatus.style.color = 'var(--success)';
+            } else if (sessionStatus) {
+                sessionStatus.textContent = 'Inactive';
+                sessionStatus.style.color = 'var(--text-muted)';
+            }
+            
+            if (sessionStartTime && window.currentSession) {
+                sessionStartTime.textContent = new Date(window.currentSession.created_at).toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+        }
+        
+        // Update stats every second
+        setInterval(updateStats, 1000);
+    </script>
 </body>
 </html>
